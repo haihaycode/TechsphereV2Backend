@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Username or email already exists");
         }
 
-        // Create new user entity
+
         User user = new User();
         user.setName(signUpDto.getName());
         user.setUsername(signUpDto.getUsername());
