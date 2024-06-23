@@ -3,6 +3,7 @@ package com.Techsphere.TechsphereV2Backend.implementation;
 import com.Techsphere.TechsphereV2Backend.Repository.RoleRepository;
 import com.Techsphere.TechsphereV2Backend.Repository.UserRepository;
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
+import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserDTO;
 import com.Techsphere.TechsphereV2Backend.entity.Role;
 import com.Techsphere.TechsphereV2Backend.entity.User;
 import com.Techsphere.TechsphereV2Backend.model.LoginDto;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -64,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
         user.setActive(true);
         user.setPassword(new BCryptPasswordEncoder().encode(signUpDto.getPassword()));
 
-        Role defaultRole = roleRepository.findByName("ROLE_USER");
+            Role defaultRole = roleRepository.findByName("ROLE_USER");
         user.setRoles(Collections.singleton(defaultRole));
         // Save user to database
         return userRepository.save(user);
@@ -93,6 +95,22 @@ public class AuthServiceImpl implements AuthService {
     public User getUserById(String Id) {
         Optional<User> optionalUser = userRepository.findById(Long.parseLong(Id));
         return optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Override
+    public User updateUserInfo(UpdateUserDTO updateUserDTO) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsernameOrEmail(currentUsername, currentUsername);
+        if (currentUser == null) {
+            throw new RuntimeException("User not found , Please Login again !");
+        }
+        currentUser.setGender(updateUserDTO.getGender());
+        currentUser.setAddress(updateUserDTO.getAddress());
+        currentUser.setName(updateUserDTO.getName());
+        currentUser.setPhoneNumber(updateUserDTO.getPhoneNumber());
+
+        return userRepository.save(currentUser);
+
     }
 
 }
