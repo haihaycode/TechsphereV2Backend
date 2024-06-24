@@ -22,7 +22,11 @@ public interface AuthService {
 //    String changePassword(String passOld ,String passNew, int OTP);
 
     User updateUserInfo(UpdateUserDTO updateUserDTO);
+
+    User findUserInfo();
+
     User updateUserImage(MultipartFile file);
+
 
 
 }
