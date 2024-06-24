@@ -8,12 +8,16 @@ import com.Techsphere.TechsphereV2Backend.model.SignUpDto;
 import org.hibernate.sql.Update;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface AuthService {
     String login(LoginDto loginDto);
     User   signUp(SignUpDto signUpDto);
 
     User getUserByUsernameOrEmail(String usernameOrEmail);
     User getUsernameOrEmailActive(String usernameOrEmail);
+
+    List<User> getAll();
 
 
 
