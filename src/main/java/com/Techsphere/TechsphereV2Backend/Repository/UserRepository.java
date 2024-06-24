@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("SELECT u FROM User u WHERE u.username = ?1 OR u.email = ?2")
+    @Query("SELECT u FROM User u WHERE u.username = ?1 OR u.email = ?2 and u.active=true")
     User findByUsernameOrEmail(String username, String email);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
