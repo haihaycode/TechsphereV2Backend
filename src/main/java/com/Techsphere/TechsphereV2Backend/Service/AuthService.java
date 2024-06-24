@@ -1,10 +1,12 @@
 package com.Techsphere.TechsphereV2Backend.Service;
 
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserDTO;
+import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserImageDTO;
 import com.Techsphere.TechsphereV2Backend.entity.User;
 import com.Techsphere.TechsphereV2Backend.model.LoginDto;
 import com.Techsphere.TechsphereV2Backend.model.SignUpDto;
 import org.hibernate.sql.Update;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface AuthService {
     String login(LoginDto loginDto);
@@ -20,6 +22,7 @@ public interface AuthService {
 //    String changePassword(String passOld ,String passNew, int OTP);
 
     User updateUserInfo(UpdateUserDTO updateUserDTO);
+    User updateUserImage(MultipartFile file);
 
 
 }

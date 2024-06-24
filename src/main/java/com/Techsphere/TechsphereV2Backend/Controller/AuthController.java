@@ -4,6 +4,7 @@ package com.Techsphere.TechsphereV2Backend.Controller;
 import com.Techsphere.TechsphereV2Backend.Logout.Blacklist;
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserDTO;
+import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserImageDTO;
 import com.Techsphere.TechsphereV2Backend.entity.User;
 import com.Techsphere.TechsphereV2Backend.model.JwtAuthResponse;
 import com.Techsphere.TechsphereV2Backend.model.LoginDto;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @AllArgsConstructor
 @CrossOrigin
@@ -86,6 +88,21 @@ public class AuthController {
     public ResponseEntity<Response<User>> updateProfile(@RequestBody UpdateUserDTO updateUserDTO){
         try {
             User user = authService.updateUserInfo(updateUserDTO);
+
+            Response<User> response = new Response<>(user, "User updated successfully", HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (RuntimeException e){
+            Response<User> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+    @PostMapping("/update/avatar")
+    @ResponseBody
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Response<User>> updateUserImage(@RequestParam("image")MultipartFile file){
+        try {
+            User user = authService.updateUserImage(file);
 
             Response<User> response = new Response<>(user, "User updated successfully", HttpStatus.OK);
             return new ResponseEntity<>(response, HttpStatus.OK);
