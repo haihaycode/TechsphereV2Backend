@@ -24,10 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -98,6 +95,11 @@ public class AuthServiceImpl implements AuthService {
         return user;
     }
 
+    @Override
+    public List<User> getAll() {
+        return userRepository.findAll();
+    }
+
     public User getUserById(String Id) {
         Optional<User> optionalUser = userRepository.findById(Long.parseLong(Id));
         return optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
@@ -118,6 +120,14 @@ public class AuthServiceImpl implements AuthService {
         return userRepository.save(currentUser);
 
     }
+
+    //viết lại
+
+    @Override
+    public User findUserInfo() {
+        return null;
+    }
+
 
     @Override
     public User updateUserImage(MultipartFile file) {

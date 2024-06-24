@@ -97,25 +97,7 @@ public class AuthController {
         }
 
     }
-    @GetMapping("/info")
-    public ResponseEntity<UpdateUserDTO> getCurrentUserInfo() {
-        try {
-            User currentUser = authService.findUserInfo();
 
-            UpdateUserDTO updateUserDTO = new UpdateUserDTO();
-            updateUserDTO.setName(currentUser.getName());
-            updateUserDTO.setEmail(currentUser.getEmail());
-            updateUserDTO.setUsername(currentUser.getUsername());
-            updateUserDTO.setGender(currentUser.getGender());
-            updateUserDTO.setAddress(currentUser.getAddress());
-            updateUserDTO.setPhoneNumber(currentUser.getPhoneNumber());
-            updateUserDTO.setProfilePicture(currentUser.getAvatar());
-
-            return ResponseEntity.ok(updateUserDTO);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-    }
 
     @PostMapping("/update/avatar")
     @ResponseBody
