@@ -3,17 +3,16 @@ package com.Techsphere.TechsphereV2Backend.Controller;
 
 import com.Techsphere.TechsphereV2Backend.Logout.Blacklist;
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
-import com.Techsphere.TechsphereV2Backend.Service.OtpService;
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserDTO;
-import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserImageDTO;
 import com.Techsphere.TechsphereV2Backend.entity.User;
+import com.Techsphere.TechsphereV2Backend.mail.MailServiceImpl;
+import com.Techsphere.TechsphereV2Backend.mail.OtpService;
 import com.Techsphere.TechsphereV2Backend.model.JwtAuthResponse;
 import com.Techsphere.TechsphereV2Backend.model.LoginDto;
 import com.Techsphere.TechsphereV2Backend.model.Response;
 import com.Techsphere.TechsphereV2Backend.model.SignUpDto;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +37,8 @@ public class AuthController {
     // Build Login REST API
    @Autowired
    private OtpService otpService;
+   @Autowired
+    MailServiceImpl mailService;
 
 
 
@@ -151,40 +153,6 @@ public class AuthController {
         }
 
     }
-    @PostMapping("/send")
-    @ResponseBody
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public Map<String, String> sendOtp() {
-        Map<String, String> response = new HashMap<>();
-        try {
-            UpdateUserDTO userDTO = authService.sendMail();
-            String otp = otpService.generateOtp(userDTO.getEmail());
-            otpService.sendOtpEmail(userDTO.getEmail(), otp);
-            response.put("message", "OTP sent successfully");
-        } catch (RuntimeException | MessagingException e) {
-            response.put("message", "Failed to send OTP: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return response;
-    }
-    @PostMapping("/verify")
-    public Map<String, String> verifyOtp(@RequestParam("otp") String otp, @RequestParam("password") String password) {
-        Map<String, String> response = new HashMap<>();
-        try {
-            UpdateUserDTO userDTO = authService.sendMail();
-            boolean isValid = otpService.validateOtp(userDTO.getEmail(), otp);
-            if (isValid) {
-                authService.updatePassword(password); // Cập nhật email mới cho người dùng
-                response.put("message", "Email updated successfully");
-                // Thực hiện các hoạt động tiếp theo sau khi cập nhật email
-            } else {
-                response.put("message", "Invalid OTP, please try again");
-            }
-        } catch (RuntimeException e) {
-            response.put("message", "User not found, Please Login again!");
-            e.printStackTrace();
-        }
-        return response;
-    }
+
 
 }

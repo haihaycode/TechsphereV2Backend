@@ -34,6 +34,5 @@ public interface AuthService {
     User updateUserImage(MultipartFile file);
 
 
-    UpdateUserDTO sendMail();
-    void updatePassword(String newPassword);
+
 }
