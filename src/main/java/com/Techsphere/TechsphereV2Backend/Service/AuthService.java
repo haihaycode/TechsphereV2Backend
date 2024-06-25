@@ -27,7 +27,7 @@ public interface AuthService {
 
     User updateUserInfo(UpdateUserDTO updateUserDTO);
 
-    User findUserInfo();
+    UpdateUserDTO findUserInfo();
 
     User updateUserImage(MultipartFile file);
 

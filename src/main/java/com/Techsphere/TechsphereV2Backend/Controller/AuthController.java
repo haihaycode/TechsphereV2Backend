@@ -80,11 +80,25 @@ public class AuthController {
         }
     }
 
-
-
-    @PostMapping("/update/profile")
+    @PostMapping("/account/auth")
     @ResponseBody
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Response<UpdateUserDTO>> Profile(){
+        try {
+            UpdateUserDTO user = authService.findUserInfo();
+
+            Response<UpdateUserDTO> response = new Response<>(user, "Info account ", HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (RuntimeException e){
+            Response<UpdateUserDTO> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @PostMapping("/account/update/profile")
+    @ResponseBody
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response<User>> updateProfile(@RequestBody UpdateUserDTO updateUserDTO){
         try {
             User user = authService.updateUserInfo(updateUserDTO);
@@ -98,10 +112,9 @@ public class AuthController {
 
     }
 
-
-    @PostMapping("/update/avatar")
+    @PostMapping("/account/update/avatar")
     @ResponseBody
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response<User>> updateUserImage(@RequestParam("image")MultipartFile file){
         try {
             User user = authService.updateUserImage(file);

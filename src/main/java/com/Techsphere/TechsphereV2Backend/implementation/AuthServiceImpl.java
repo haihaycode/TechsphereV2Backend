@@ -124,8 +124,20 @@ public class AuthServiceImpl implements AuthService {
     //viết lại
 
     @Override
-    public User findUserInfo() {
-        return null;
+    public UpdateUserDTO findUserInfo() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsernameOrEmail(currentUsername, currentUsername);
+        if (currentUser == null) {
+            throw new RuntimeException("User not found , Please Login again !");
+        }
+        UpdateUserDTO UserDTO = new UpdateUserDTO();
+        UserDTO.setUsername(currentUser.getUsername());
+        UserDTO.setName(currentUser.getName());
+        UserDTO.setGender(currentUser.getGender());
+        UserDTO.setEmail(currentUser.getEmail());
+        UserDTO.setPhoneNumber(currentUser.getPhoneNumber());
+        UserDTO.setProfilePicture(currentUser.getAvatar());
+        return UserDTO;
     }
 
 
