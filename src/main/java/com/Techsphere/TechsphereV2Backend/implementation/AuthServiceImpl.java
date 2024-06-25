@@ -6,7 +6,6 @@ import com.Techsphere.TechsphereV2Backend.Service.AuthService;
 import com.Techsphere.TechsphereV2Backend.Service.Image.ImageStorageService;
 import com.Techsphere.TechsphereV2Backend.Utils.OrderUtils;
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserDTO;
-import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserImageDTO;
 import com.Techsphere.TechsphereV2Backend.entity.Role;
 import com.Techsphere.TechsphereV2Backend.entity.User;
 import com.Techsphere.TechsphereV2Backend.model.LoginDto;
@@ -20,7 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -120,6 +118,17 @@ public class AuthServiceImpl implements AuthService {
         return userRepository.save(currentUser);
 
     }
+    @Override
+    public User updateUserEmail(UpdateUserDTO updateUserDTO) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsernameOrEmail(currentUsername, currentUsername);
+        if (currentUser == null) {
+            throw new RuntimeException("User not found , Please Login again !");
+        }
+        currentUser.setEmail(updateUserDTO.getEmail());
+      return userRepository.save(currentUser);
+
+    }
 
     //viết lại
 
@@ -139,6 +148,7 @@ public class AuthServiceImpl implements AuthService {
         UserDTO.setProfilePicture(currentUser.getAvatar());
         return UserDTO;
     }
+
 
 
     @Override
@@ -167,6 +177,28 @@ public class AuthServiceImpl implements AuthService {
             }
         }
        return userRepository.save(currentUser);
+    }
+    @Override
+    public UpdateUserDTO sendMail() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsernameOrEmail(currentUsername, currentUsername);
+        if (currentUser == null) {
+            throw new RuntimeException("User not found, Please Login again!");
+        }
+        UpdateUserDTO userDTO = new UpdateUserDTO();
+        userDTO.setEmail(currentUser.getEmail());
+        return userDTO;
+    }
+    @Override
+    public void updatePassword(String newPassword) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsernameOrEmail(currentUsername, currentUsername);
+        if (currentUser != null) {
+            currentUser.setPassword(new BCryptPasswordEncoder().encode(newPassword)); // Mã hóa mật khẩu mới
+            userRepository.save(currentUser);
+        } else {
+            throw new RuntimeException("User not found, Please Login again!");
+        }
     }
 
 }

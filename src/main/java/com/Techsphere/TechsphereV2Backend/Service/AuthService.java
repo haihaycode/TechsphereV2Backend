@@ -27,10 +27,13 @@ public interface AuthService {
 
     User updateUserInfo(UpdateUserDTO updateUserDTO);
 
+    User updateUserEmail(UpdateUserDTO updateUserDTO);
+
     UpdateUserDTO UserInfo();
 
     User updateUserImage(MultipartFile file);
 
 
-
+    UpdateUserDTO sendMail();
+    void updatePassword(String newPassword);
 }
