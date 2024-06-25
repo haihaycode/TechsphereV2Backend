@@ -30,6 +30,9 @@ public class AuthController {
     @Autowired
     private Blacklist blacklist;
     // Build Login REST API
+
+
+
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto){
         try {
@@ -80,13 +83,12 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/account/auth")
+    @GetMapping ("/account/auth")
     @ResponseBody
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response<UpdateUserDTO>> Profile(){
         try {
-            UpdateUserDTO user = authService.findUserInfo();
-
+            UpdateUserDTO user = authService.UserInfo();
             Response<UpdateUserDTO> response = new Response<>(user, "Info account ", HttpStatus.OK);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (RuntimeException e){
@@ -112,7 +114,7 @@ public class AuthController {
 
     }
 
-    @PostMapping("/account/update/avatar")
+        @PostMapping("/account/update/avatar")
     @ResponseBody
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response<User>> updateUserImage(@RequestParam("image")MultipartFile file){

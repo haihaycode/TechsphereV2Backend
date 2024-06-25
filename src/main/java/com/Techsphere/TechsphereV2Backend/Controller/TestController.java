@@ -1,17 +1,22 @@
 package com.Techsphere.TechsphereV2Backend.Controller;
 
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
+import com.Techsphere.TechsphereV2Backend.Service.Image.ImageStorageService;
 import com.Techsphere.TechsphereV2Backend.entity.User;
 import com.Techsphere.TechsphereV2Backend.model.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -19,6 +24,25 @@ import java.util.List;
 public class TestController {
     @Autowired
     private AuthService authService;
+    @Autowired
+    ImageStorageService imageStorageService;
+    private static final String UPLOAD_DIR = "uploads/profile/";
+
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @GetMapping("/public/client/image/{name}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String name) {
+        try {
+            byte[] imageData = imageStorageService.loadImage(name);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_JPEG); // Hoặc MediaType.IMAGE_PNG tùy vào loại hình ảnh
+
+            return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")

@@ -124,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
     //viết lại
 
     @Override
-    public UpdateUserDTO findUserInfo() {
+    public UpdateUserDTO UserInfo() {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByUsernameOrEmail(currentUsername, currentUsername);
         if (currentUser == null) {
