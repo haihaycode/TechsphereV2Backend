@@ -25,14 +25,17 @@ public class Blog_Post {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
+    private boolean isActive;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "categoryId", nullable = false)
     private Blog_Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
