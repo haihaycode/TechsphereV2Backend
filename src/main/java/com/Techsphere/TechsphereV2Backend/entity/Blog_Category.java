@@ -17,14 +17,21 @@ import java.time.LocalDateTime;
 public class Blog_Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long category_id;
+    @Column(name = "categoryId")
+    private Long categoryId;
 
-    @Column(nullable = false)
-    private String category_name;
+    @Column(nullable = false, name = "categoryName")
+    private String categoryName;
 
-    @Column(nullable = false)
-    private LocalDateTime created_at;
+    @Column(nullable = false,name = "isActive")
+    private boolean isActive;
 
-    @Column(nullable = false)
-    private LocalDateTime updated_at;
+    @Column(name = "categoryImage")
+    private String categoryImage;
+
+    @Column(nullable = true,name = "createdAt")
+    private LocalDateTime createdAt;
+
+    @Column(nullable = true,name = "updatedAt")
+    private LocalDateTime updatedAt;
 }
