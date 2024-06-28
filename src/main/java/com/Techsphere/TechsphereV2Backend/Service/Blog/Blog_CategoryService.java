@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface Blog_CategoryService {
     Blog_Category uploadCategory(UpdateCategoryDTO categoryDTO, MultipartFile file);
-
+    List<Blog_Category> getAllCategoriesOrderedByActiveAndName();
     List<Blog_Category> getAll();
 }

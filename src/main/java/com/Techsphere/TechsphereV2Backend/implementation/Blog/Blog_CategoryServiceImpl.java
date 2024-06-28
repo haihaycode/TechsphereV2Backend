@@ -18,6 +18,8 @@ import java.util.List;
 public class Blog_CategoryServiceImpl implements Blog_CategoryService {
 
     private final ImageStorageService imageStorageService;
+
+
     private final Blog_CategoryRepository blogCategoryRepository; // Thêm injection
 
     @Autowired
@@ -51,6 +53,11 @@ public class Blog_CategoryServiceImpl implements Blog_CategoryService {
         category.setActive(categoryDTO.isActive());
 
         return blogCategoryRepository.save(category);
+    }
+
+    @Override
+    public List<Blog_Category> getAllCategoriesOrderedByActiveAndName() {
+        return blogCategoryRepository.findAllCategoriesOrderedByActiveAndName();
     }
 
 

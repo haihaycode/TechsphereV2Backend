@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @CrossOrigin
@@ -21,7 +22,7 @@ public class Blog_CategoryController {
     @Autowired
     private Blog_CategoryService blogCategoryService;
 
-    @PostMapping("/upload")
+    @PostMapping("/categories/upload")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response<Blog_Category>> uploadCategory(   @RequestParam("categoryName") String categoryName,
@@ -43,4 +44,20 @@ public class Blog_CategoryController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/categories")
+    @ResponseBody
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Response<List<Blog_Category>>> getAllCategoriesOrderedByActiveAndName() {
+        try {
+            System.out.println("1");
+            List<Blog_Category> categories = blogCategoryService.getAllCategoriesOrderedByActiveAndName();
+            Response<List<Blog_Category>> response = new Response<>(categories, "Categories retrieved successfully", HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            Response<List<Blog_Category>> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
