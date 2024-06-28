@@ -4,12 +4,12 @@ import com.Techsphere.TechsphereV2Backend.Repository.RoleRepository;
 import com.Techsphere.TechsphereV2Backend.Repository.UserRepository;
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
 import com.Techsphere.TechsphereV2Backend.Service.Image.ImageStorageService;
+import com.Techsphere.TechsphereV2Backend.mail.OtpService;
 import com.Techsphere.TechsphereV2Backend.Utils.OrderUtils;
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserDTO;
 import com.Techsphere.TechsphereV2Backend.entity.Role;
 import com.Techsphere.TechsphereV2Backend.entity.User;
 import com.Techsphere.TechsphereV2Backend.mail.MailServiceImpl;
-import com.Techsphere.TechsphereV2Backend.mail.OtpService;
 import com.Techsphere.TechsphereV2Backend.model.LoginDto;
 import com.Techsphere.TechsphereV2Backend.model.SignUpDto;
 import com.Techsphere.TechsphereV2Backend.security.JwtTokenProvider;
@@ -81,7 +81,6 @@ public class AuthServiceImpl implements AuthService {
         try {
             mailService.sendMailWelcome(savedUser.getEmail());
         } catch (MessagingException | IOException e) {
-            // Log the error or handle it accordingly
             e.printStackTrace();
         }
 

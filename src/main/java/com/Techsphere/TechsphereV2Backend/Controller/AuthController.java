@@ -37,7 +37,7 @@ public class AuthController {
     private Blacklist blacklist;
     // Build Login REST API
    @Autowired
-   private OtpService otpService;
+    OtpService otpService;
    @Autowired
     MailServiceImpl mailService;
 
@@ -154,6 +154,9 @@ public class AuthController {
         }
 
     }
+
+
+
 
     @PostMapping("/send")
     @ResponseBody
