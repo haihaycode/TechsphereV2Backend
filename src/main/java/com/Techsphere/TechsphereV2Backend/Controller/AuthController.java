@@ -3,6 +3,7 @@ package com.Techsphere.TechsphereV2Backend.Controller;
 
 import com.Techsphere.TechsphereV2Backend.Logout.Blacklist;
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
+import com.Techsphere.TechsphereV2Backend.dto.auth.UpdatePassDTO;
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserDTO;
 import com.Techsphere.TechsphereV2Backend.entity.User;
 import com.Techsphere.TechsphereV2Backend.mail.MailServiceImpl;
@@ -150,6 +151,47 @@ public class AuthController {
         }catch (RuntimeException e){
             Response<User> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @PostMapping("/send")
+    @ResponseBody
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Map<String, String>> sendOtp() {
+        Map<String, String> response = new HashMap<>();
+        try {
+            UpdateUserDTO userDTO = authService.sendMail();
+            String otp = otpService.generateOtp(userDTO.getEmail());
+            otpService.sendOtpEmail(userDTO.getEmail(), otp);
+            response.put("message", "OTP sent successfully");
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException | MessagingException e) {
+            response.put("message", "Failed to send OTP: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+    }
+    @PostMapping("/verify")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> verifyOtp(@RequestBody UpdatePassDTO updatePassDTO) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            UpdateUserDTO userDTO = authService.sendMail();
+            boolean isValid = otpService.validateOtp(userDTO.getEmail(), updatePassDTO.getOtp());
+            if (isValid) {
+                authService.updatePassword(updatePassDTO.getPassword());
+                response.put("message", "Password updated successfully");
+                return ResponseEntity.ok(response); // Return 200 OK with the response
+            } else {
+                response.put("message", "Invalid OTP, please try again");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (RuntimeException e) {
+            response.put("message", "User not found, Please Login again!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // Return 500 Internal Server Error with the response
         }
 
     }

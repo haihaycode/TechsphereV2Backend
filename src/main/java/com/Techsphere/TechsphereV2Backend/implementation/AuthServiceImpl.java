@@ -193,6 +193,27 @@ public class AuthServiceImpl implements AuthService {
         }
        return userRepository.save(currentUser);
     }
-
+    @Override
+    public UpdateUserDTO sendMail() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsernameOrEmail(currentUsername, currentUsername);
+        if (currentUser == null) {
+            throw new RuntimeException("User not found, Please Login again!");
+        }
+        UpdateUserDTO userDTO = new UpdateUserDTO();
+        userDTO.setEmail(currentUser.getEmail());
+        return userDTO;
+    }
+    @Override
+    public void updatePassword(String newPassword) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsernameOrEmail(currentUsername, currentUsername);
+        if (currentUser != null) {
+            currentUser.setPassword(new BCryptPasswordEncoder().encode(newPassword)); // Mã hóa mật khẩu mới
+            userRepository.save(currentUser);
+        } else {
+            throw new RuntimeException("User not found, Please Login again!");
+        }
+    }
 
 }
