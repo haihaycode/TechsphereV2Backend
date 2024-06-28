@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "blog_category")
+//Fix database ngày 26-6, lỗi tên
 public class Blog_Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

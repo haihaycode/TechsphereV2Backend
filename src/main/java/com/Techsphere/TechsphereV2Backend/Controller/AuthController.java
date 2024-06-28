@@ -138,7 +138,7 @@ public class AuthController {
 
     }
 
-     @PostMapping("/account/update/avatar")
+        @PostMapping("/account/update/avatar")
     @ResponseBody
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response<User>> updateUserImage(@RequestParam("image")MultipartFile file){
@@ -153,6 +153,5 @@ public class AuthController {
         }
 
     }
-
 
 }
