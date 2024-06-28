@@ -26,6 +26,9 @@ public class Blog_Post {
     private String content;
 
     @Column(nullable = true)
+    private String image;
+
+    @Column(nullable = true)
     private LocalDateTime createdAt;
 
     @Column(nullable = true)
