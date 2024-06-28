@@ -4,14 +4,15 @@ package com.Techsphere.TechsphereV2Backend.Controller;
 import com.Techsphere.TechsphereV2Backend.Logout.Blacklist;
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserDTO;
-import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserImageDTO;
 import com.Techsphere.TechsphereV2Backend.entity.User;
+import com.Techsphere.TechsphereV2Backend.mail.MailServiceImpl;
+import com.Techsphere.TechsphereV2Backend.mail.OtpService;
 import com.Techsphere.TechsphereV2Backend.model.JwtAuthResponse;
 import com.Techsphere.TechsphereV2Backend.model.LoginDto;
 import com.Techsphere.TechsphereV2Backend.model.Response;
 import com.Techsphere.TechsphereV2Backend.model.SignUpDto;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @AllArgsConstructor
 @CrossOrigin
@@ -30,18 +35,24 @@ public class AuthController {
     @Autowired
     private Blacklist blacklist;
     // Build Login REST API
+   @Autowired
+   private OtpService otpService;
+   @Autowired
+    MailServiceImpl mailService;
+
 
 
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto){
         try {
-            String token = authService.login(loginDto);
+        String token = authService.login(loginDto);
 
-            JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
-            jwtAuthResponse.setAccessToken(token);
+        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
 
-            return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+        }
+        catch (RuntimeException e){
             JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
             jwtAuthResponse.setError(e.getMessage());
             return new ResponseEntity<>(jwtAuthResponse, HttpStatus.BAD_REQUEST);
@@ -50,19 +61,18 @@ public class AuthController {
 
     @PostMapping("/signup")
     @ResponseBody
-    public ResponseEntity<Response<User>> signUp(@RequestBody SignUpDto signUpDto) {
-        try {
-            User user = authService.signUp(signUpDto);
+    public ResponseEntity<Response<User>> signUp(@RequestBody SignUpDto signUpDto){
+         try {
+             User user = authService.signUp(signUpDto);
 
-            Response<User> response = new Response<>(user, "User registered successfully", HttpStatus.OK);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            Response<User> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+             Response<User> response = new Response<>(user, "User registered successfully", HttpStatus.OK);
+             return new ResponseEntity<>(response, HttpStatus.OK);
+         }catch (RuntimeException e){
+             Response<User> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
+             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+         }
 
     }
-
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
@@ -82,15 +92,15 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/account/auth")
+    @GetMapping ("/account/auth")
     @ResponseBody
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Response<UpdateUserDTO>> Profile() {
+    public ResponseEntity<Response<UpdateUserDTO>> Profile(){
         try {
             UpdateUserDTO user = authService.UserInfo();
             Response<UpdateUserDTO> response = new Response<>(user, "Info account ", HttpStatus.OK);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        }catch (RuntimeException e){
             Response<UpdateUserDTO> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -100,29 +110,44 @@ public class AuthController {
     @PostMapping("/account/update/profile")
     @ResponseBody
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Response<User>> updateProfile(@RequestBody UpdateUserDTO updateUserDTO) {
+    public ResponseEntity<Response<User>> updateProfile(@RequestBody UpdateUserDTO updateUserDTO){
         try {
             User user = authService.updateUserInfo(updateUserDTO);
 
             Response<User> response = new Response<>(user, "User updated successfully", HttpStatus.OK);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        }catch (RuntimeException e){
+            Response<User> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+    @PostMapping("/account/update/email")
+    @ResponseBody
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Response<User>> updateEmail(@RequestBody UpdateUserDTO updateUserDTO){
+        try {
+            User user = authService.updateUserEmail(updateUserDTO);
+
+            Response<User> response = new Response<>(user, "Email updated successfully", HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (RuntimeException e){
             Response<User> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    @PostMapping("/account/update/avatar")
+        @PostMapping("/account/update/avatar")
     @ResponseBody
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Response<User>> updateUserImage(@RequestParam("image") MultipartFile file) {
+    public ResponseEntity<Response<User>> updateUserImage(@RequestParam("image")MultipartFile file){
         try {
             User user = authService.updateUserImage(file);
 
             Response<User> response = new Response<>(user, "User updated successfully", HttpStatus.OK);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        }catch (RuntimeException e){
             Response<User> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
