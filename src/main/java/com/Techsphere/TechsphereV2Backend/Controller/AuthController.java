@@ -4,14 +4,15 @@ package com.Techsphere.TechsphereV2Backend.Controller;
 import com.Techsphere.TechsphereV2Backend.Logout.Blacklist;
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserDTO;
-import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserImageDTO;
 import com.Techsphere.TechsphereV2Backend.entity.User;
+import com.Techsphere.TechsphereV2Backend.mail.MailServiceImpl;
+import com.Techsphere.TechsphereV2Backend.mail.OtpService;
 import com.Techsphere.TechsphereV2Backend.model.JwtAuthResponse;
 import com.Techsphere.TechsphereV2Backend.model.LoginDto;
 import com.Techsphere.TechsphereV2Backend.model.Response;
 import com.Techsphere.TechsphereV2Backend.model.SignUpDto;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @AllArgsConstructor
 @CrossOrigin
@@ -30,6 +35,10 @@ public class AuthController {
     @Autowired
     private Blacklist blacklist;
     // Build Login REST API
+   @Autowired
+   private OtpService otpService;
+   @Autowired
+    MailServiceImpl mailService;
 
 
 
@@ -106,6 +115,21 @@ public class AuthController {
             User user = authService.updateUserInfo(updateUserDTO);
 
             Response<User> response = new Response<>(user, "User updated successfully", HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (RuntimeException e){
+            Response<User> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+    @PostMapping("/account/update/email")
+    @ResponseBody
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Response<User>> updateEmail(@RequestBody UpdateUserDTO updateUserDTO){
+        try {
+            User user = authService.updateUserEmail(updateUserDTO);
+
+            Response<User> response = new Response<>(user, "Email updated successfully", HttpStatus.OK);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (RuntimeException e){
             Response<User> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -6,12 +6,14 @@ import com.Techsphere.TechsphereV2Backend.Service.AuthService;
 import com.Techsphere.TechsphereV2Backend.Service.Image.ImageStorageService;
 import com.Techsphere.TechsphereV2Backend.Utils.OrderUtils;
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserDTO;
-import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserImageDTO;
 import com.Techsphere.TechsphereV2Backend.entity.Role;
 import com.Techsphere.TechsphereV2Backend.entity.User;
+import com.Techsphere.TechsphereV2Backend.mail.MailServiceImpl;
+import com.Techsphere.TechsphereV2Backend.mail.OtpService;
 import com.Techsphere.TechsphereV2Backend.model.LoginDto;
 import com.Techsphere.TechsphereV2Backend.model.SignUpDto;
 import com.Techsphere.TechsphereV2Backend.security.JwtTokenProvider;
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +22,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -37,6 +38,8 @@ public class AuthServiceImpl implements AuthService {
     private RoleRepository roleRepository;
     @Autowired
     ImageStorageService imageStorageService;
+    @Autowired
+    OtpService mailService;
 
     @Override
     public String login(LoginDto loginDto) {
@@ -72,7 +75,17 @@ public class AuthServiceImpl implements AuthService {
             Role defaultRole = roleRepository.findByName("ROLE_USER");
         user.setRoles(Collections.singleton(defaultRole));
         // Save user to database
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Send welcome email
+        try {
+            mailService.sendMailWelcome(savedUser.getEmail());
+        } catch (MessagingException | IOException e) {
+            // Log the error or handle it accordingly
+            e.printStackTrace();
+        }
+
+        return savedUser;
     }
     @Override
     public User getUserByUsernameOrEmail(String usernameOrEmail){
@@ -120,6 +133,17 @@ public class AuthServiceImpl implements AuthService {
         return userRepository.save(currentUser);
 
     }
+    @Override
+    public User updateUserEmail(UpdateUserDTO updateUserDTO) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsernameOrEmail(currentUsername, currentUsername);
+        if (currentUser == null) {
+            throw new RuntimeException("User not found , Please Login again !");
+        }
+        currentUser.setEmail(updateUserDTO.getEmail());
+      return userRepository.save(currentUser);
+
+    }
 
     //viết lại
 
@@ -139,6 +163,7 @@ public class AuthServiceImpl implements AuthService {
         UserDTO.setProfilePicture(currentUser.getAvatar());
         return UserDTO;
     }
+
 
 
     @Override
@@ -168,5 +193,6 @@ public class AuthServiceImpl implements AuthService {
         }
        return userRepository.save(currentUser);
     }
+
 
 }
