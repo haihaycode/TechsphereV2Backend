@@ -3,11 +3,10 @@ package com.Techsphere.TechsphereV2Backend.Controller;
 
 import com.Techsphere.TechsphereV2Backend.Logout.Blacklist;
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
+import com.Techsphere.TechsphereV2Backend.mail.OtpService;
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdatePassDTO;
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateUserDTO;
 import com.Techsphere.TechsphereV2Backend.entity.User;
-import com.Techsphere.TechsphereV2Backend.mail.MailServiceImpl;
-import com.Techsphere.TechsphereV2Backend.mail.OtpService;
 import com.Techsphere.TechsphereV2Backend.model.JwtAuthResponse;
 import com.Techsphere.TechsphereV2Backend.model.LoginDto;
 import com.Techsphere.TechsphereV2Backend.model.Response;
@@ -22,7 +21,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,22 +34,20 @@ public class AuthController {
     @Autowired
     private Blacklist blacklist;
     // Build Login REST API
-   @Autowired
-    OtpService otpService;
-   @Autowired
-    MailServiceImpl mailService;
+    @Autowired
+    private OtpService otpService;
 
 
 
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto){
         try {
-        String token = authService.login(loginDto);
+            String token = authService.login(loginDto);
 
-        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
-        jwtAuthResponse.setAccessToken(token);
+            JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+            jwtAuthResponse.setAccessToken(token);
 
-        return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+            return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
         }
         catch (RuntimeException e){
             JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
@@ -63,15 +59,15 @@ public class AuthController {
     @PostMapping("/signup")
     @ResponseBody
     public ResponseEntity<Response<User>> signUp(@RequestBody SignUpDto signUpDto){
-         try {
-             User user = authService.signUp(signUpDto);
+        try {
+            User user = authService.signUp(signUpDto);
 
-             Response<User> response = new Response<>(user, "User registered successfully", HttpStatus.OK);
-             return new ResponseEntity<>(response, HttpStatus.OK);
-         }catch (RuntimeException e){
-             Response<User> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
-             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-         }
+            Response<User> response = new Response<>(user, "User registered successfully", HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (RuntimeException e){
+            Response<User> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
 
     }
     @PostMapping("/logout")
@@ -139,7 +135,7 @@ public class AuthController {
 
     }
 
-        @PostMapping("/account/update/avatar")
+    @PostMapping("/account/update/avatar")
     @ResponseBody
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response<User>> updateUserImage(@RequestParam("image")MultipartFile file){
@@ -154,10 +150,6 @@ public class AuthController {
         }
 
     }
-
-
-
-
     @PostMapping("/send")
     @ResponseBody
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -198,5 +190,6 @@ public class AuthController {
         }
 
     }
+
 
 }

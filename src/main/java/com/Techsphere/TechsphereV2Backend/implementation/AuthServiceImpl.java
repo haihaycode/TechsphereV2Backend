@@ -160,6 +160,7 @@ public class AuthServiceImpl implements AuthService {
         UserDTO.setEmail(currentUser.getEmail());
         UserDTO.setPhoneNumber(currentUser.getPhoneNumber());
         UserDTO.setProfilePicture(currentUser.getAvatar());
+        UserDTO.setAddress(currentUser.getAddress())    ;
         return UserDTO;
     }
 
