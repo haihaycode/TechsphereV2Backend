@@ -1,7 +1,8 @@
-package com.Techsphere.TechsphereV2Backend.Controller.Blog;
+package com.Techsphere.TechsphereV2Backend.Controller.Admin.Blog;
 
 
-import com.Techsphere.TechsphereV2Backend.Service.BlogService.Blog_PostService;
+import com.Techsphere.TechsphereV2Backend.Service.Blog.Blog_PostService;
+import com.Techsphere.TechsphereV2Backend.dto.auth.Blog.Blog_PostDTO;
 import com.Techsphere.TechsphereV2Backend.entity.Blog_Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +17,10 @@ public class Blog_PostController {
     @Autowired
     Blog_PostService blog_PostService;
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/create")
-    public ResponseEntity<Blog_Post> createPost(@RequestBody Blog_Post post) {
+    @PostMapping("/blog/create")
+    public ResponseEntity<Blog_Post> createPost(@RequestBody Blog_PostDTO blogPostDTO) {
         try {
-            Blog_Post createdPost = blog_PostService.createPost(post);
+            Blog_Post createdPost = blog_PostService.createPost(blogPostDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -28,10 +29,10 @@ public class Blog_PostController {
 
     // API cập nhật bài viết
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/update/{postId}")
-    public ResponseEntity<Blog_Post> updatePost(@PathVariable Long postId, @RequestBody Blog_Post postDetails) {
+    @PostMapping("/blog/update/{postId}")
+    public ResponseEntity<Blog_Post> updatePost( @RequestBody Blog_PostDTO postDTO) {
         try {
-            Blog_Post updatedPost = blog_PostService.updatePost(postId, postDetails);
+            Blog_Post updatedPost = blog_PostService.updatePost(postDTO);
             if (updatedPost != null) {
                 return ResponseEntity.ok(updatedPost);
             } else {
@@ -44,7 +45,7 @@ public class Blog_PostController {
 
     // API chuyển bài viết về trạng thái không hoạt động (xóa bài viết)
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/deactivate/{postId}")
+    @PostMapping("/blog/deactivate/{postId}")
     public ResponseEntity<Blog_Post> deactivatePost(@PathVariable Long postId) {
         try {
             Blog_Post updatedPost = blog_PostService.deactivatePost(postId);

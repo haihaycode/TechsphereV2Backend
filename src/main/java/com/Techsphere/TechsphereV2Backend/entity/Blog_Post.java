@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 public class Blog_Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "postID")
     private Long postId;
 
     @Column(nullable = false)
@@ -45,4 +47,10 @@ public class Blog_Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
+
+
+    @Column(name = "tag")
+    private String tags;
+
+
 }
