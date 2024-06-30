@@ -1,7 +1,9 @@
 package com.Techsphere.TechsphereV2Backend.Controller;
 
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
+import com.Techsphere.TechsphereV2Backend.Service.Blog.Blog_CategoryService;
 import com.Techsphere.TechsphereV2Backend.Service.Image.ImageStorageService;
+import com.Techsphere.TechsphereV2Backend.entity.Blog_Category;
 import com.Techsphere.TechsphereV2Backend.entity.User;
 import com.Techsphere.TechsphereV2Backend.model.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +16,19 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/")
-public class TestController {
+public class PublicController {
     @Autowired
     private AuthService authService;
     @Autowired
     ImageStorageService imageStorageService;
+
+    @Autowired
+    Blog_CategoryService blogCategoryService;
+
     private static final String UPLOAD_DIR = "uploads/profile/";
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -100,6 +103,18 @@ public class TestController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
-
+    @GetMapping("/public/client/categories")
+    @ResponseBody
+    public ResponseEntity<Response<List<Blog_Category>>> getAllCategoriesOrderedByActiveAndName() {
+        try {
+            System.out.println("1");
+            List<Blog_Category> categories = blogCategoryService.getAllCategoriesOrderedByActiveAndName();
+            Response<List<Blog_Category>> response = new Response<>(categories, "Categories retrieved successfully", HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            Response<List<Blog_Category>> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }

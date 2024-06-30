@@ -37,7 +37,7 @@ public class Blog_Post {
     private LocalDateTime updatedAt;
 
 
-    @Column(nullable = false)
+
     private boolean isActive;
 
     @ManyToOne(fetch = FetchType.LAZY)
