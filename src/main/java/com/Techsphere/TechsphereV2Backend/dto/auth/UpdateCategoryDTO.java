@@ -14,6 +14,6 @@ public class UpdateCategoryDTO {
     private MultipartFile categoryImage;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private boolean isActive;
+    private boolean active;
 
 }

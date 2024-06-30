@@ -23,6 +23,8 @@ public class OtpService {
     @Autowired
     private JavaMailSender mailSender;
     private final ResourceLoader resourceLoader;
+
+
     public OtpService(JavaMailSender mailSender, ResourceLoader resourceLoader) {
         this.mailSender = mailSender;
         this.resourceLoader = resourceLoader;

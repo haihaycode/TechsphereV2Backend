@@ -16,11 +16,8 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class MailServiceImpl {
-    private AuthenticationManager authenticationManager;
-    private JwtTokenProvider jwtTokenProvider;
-
     private UserRepository userRepository;
-    private RoleRepository roleRepository;
+
     @Autowired
     ImageStorageService imageStorageService;
     public UpdateUserDTO sendMail() {
