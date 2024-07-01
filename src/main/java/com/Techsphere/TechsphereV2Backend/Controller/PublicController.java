@@ -2,8 +2,11 @@ package com.Techsphere.TechsphereV2Backend.Controller;
 
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
 import com.Techsphere.TechsphereV2Backend.Service.Blog.Blog_CategoryService;
+import com.Techsphere.TechsphereV2Backend.Service.Blog.Blog_PostService;
 import com.Techsphere.TechsphereV2Backend.Service.Image.ImageStorageService;
+import com.Techsphere.TechsphereV2Backend.dto.auth.Blog.Blog_PostDTO;
 import com.Techsphere.TechsphereV2Backend.entity.Blog_Category;
+import com.Techsphere.TechsphereV2Backend.entity.Blog_Post;
 import com.Techsphere.TechsphereV2Backend.entity.User;
 import com.Techsphere.TechsphereV2Backend.model.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,8 @@ public class PublicController {
 
     @Autowired
     Blog_CategoryService blogCategoryService;
+    @Autowired
+    Blog_PostService blogPostService;
 
     private static final String UPLOAD_DIR = "uploads/profile/";
 
@@ -113,6 +118,17 @@ public class PublicController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (RuntimeException e) {
             Response<List<Blog_Category>> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/public/client/posts")
+    public ResponseEntity<Response<List<Blog_Post>>> getAllPosts() {
+        try {
+            List<Blog_Post> posts = blogPostService.getAllPosts();
+            Response<List<Blog_Post>> response = new Response<>(posts, "Posts retrieved successfully", HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            Response<List<Blog_Post>> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }

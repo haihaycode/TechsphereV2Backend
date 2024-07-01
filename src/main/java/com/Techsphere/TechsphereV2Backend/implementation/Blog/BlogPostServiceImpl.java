@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -65,13 +66,13 @@ public class BlogPostServiceImpl implements Blog_PostService {
                 post.setImage(postDTO.getImage()); // Update image field
                 post.setUpdatedAt(LocalDateTime.now());
                 post.setTags(postDTO.getTags());
-                Blog_Category category = blogCategoryRepository.findById(postDTO.getCategoryId())
-                        .orElseThrow(() -> new RuntimeException("Category not found"));
-                post.setCategory(category);
-
-                User author = userRepository.findById(postDTO.getAuthorId())
-                        .orElseThrow(() -> new RuntimeException("Author not found"));
-                post.setAuthor(author);
+//                Blog_Category category = blogCategoryRepository.findById(postDTO.getCategoryId())
+//                        .orElseThrow(() -> new RuntimeException("Category not found"));
+//                post.setCategory(category);
+//
+//                User author = userRepository.findById(postDTO.getAuthorId())
+//                        .orElseThrow(() -> new RuntimeException("Author not found"));
+//                post.setAuthor(author);
 
                 return blogPostRepository.save(post);
             } else {
@@ -90,5 +91,10 @@ public class BlogPostServiceImpl implements Blog_PostService {
         } else {
             throw new RuntimeException("Post not found with id " + postId);
         }
+    }
+
+    @Override
+    public List<Blog_Post> getAllPosts() {
+        return blogPostRepository.findAllBy();
     }
 }
