@@ -62,12 +62,12 @@ public class Blog_CategoryController {
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response<List<Blog_Category>>> getAllCategory() {
-        Response<List<Blog_Category>> response = null;
         try {
             List<Blog_Category> blogCategories = blogCategoryService.getAll();
-            response = new Response<>(blogCategories, "Get all categorues success fully", HttpStatus.OK);
+            Response<List<Blog_Category>> response = new Response<>(blogCategories, "Get all categorues success fully", HttpStatus.OK);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (RuntimeException e) {
+            Response<List<Blog_Category>> response = new Response<>(null, e.getMessage(), HttpStatus.BAD_REQUEST);
             return ResponseEntity.badRequest().body(response);
         }
     }
