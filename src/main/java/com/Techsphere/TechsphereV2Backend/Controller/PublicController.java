@@ -1,10 +1,9 @@
 package com.Techsphere.TechsphereV2Backend.Controller;
 
 import com.Techsphere.TechsphereV2Backend.Service.AuthService;
-import com.Techsphere.TechsphereV2Backend.Service.Blog.Blog_CategoryService;
+import com.Techsphere.TechsphereV2Backend.Service.Blog_Category.Blog_CategoryService;
 import com.Techsphere.TechsphereV2Backend.Service.Blog.Blog_PostService;
 import com.Techsphere.TechsphereV2Backend.Service.Image.ImageStorageService;
-import com.Techsphere.TechsphereV2Backend.dto.auth.Blog.Blog_PostDTO;
 import com.Techsphere.TechsphereV2Backend.entity.Blog_Category;
 import com.Techsphere.TechsphereV2Backend.entity.Blog_Post;
 import com.Techsphere.TechsphereV2Backend.entity.User;
@@ -110,10 +109,10 @@ public class PublicController {
     }
     @GetMapping("/public/client/categories")
     @ResponseBody
-    public ResponseEntity<Response<List<Blog_Category>>> getAllCategoriesOrderedByActiveAndName() {
+    public ResponseEntity<Response<List<Blog_Category>>> getAllCategoriesActive() {
         try {
             System.out.println("1");
-            List<Blog_Category> categories = blogCategoryService.getAllCategoriesOrderedByActiveAndName();
+            List<Blog_Category> categories = blogCategoryService.getAllCategoriesActive();
             Response<List<Blog_Category>> response = new Response<>(categories, "Categories retrieved successfully", HttpStatus.OK);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (RuntimeException e) {

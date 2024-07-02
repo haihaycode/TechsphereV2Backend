@@ -1,12 +1,13 @@
 package com.Techsphere.TechsphereV2Backend.implementation.Blog;
 
-import com.Techsphere.TechsphereV2Backend.Repository.Blog_CategoryRepository;
-import com.Techsphere.TechsphereV2Backend.Service.Blog.Blog_CategoryService;
+import com.Techsphere.TechsphereV2Backend.Repository.Blog_CategoryRepository.Blog_CategoryRepository;
+import com.Techsphere.TechsphereV2Backend.Service.Blog_Category.Blog_CategoryService;
 import com.Techsphere.TechsphereV2Backend.Service.Image.ImageStorageService;
 import com.Techsphere.TechsphereV2Backend.Utils.OrderUtils;
 import com.Techsphere.TechsphereV2Backend.dto.auth.UpdateCategoryDTO;
 import com.Techsphere.TechsphereV2Backend.entity.Blog_Category;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,14 +59,14 @@ public class Blog_CategoryServiceImpl implements Blog_CategoryService {
     }
 
     @Override
-    public List<Blog_Category> getAllCategoriesOrderedByActiveAndName() {
-        return blogCategoryRepository.findAllCategoriesOrderedByActiveAndName();
+    public List<Blog_Category> getAllCategoriesActive() {
+        return blogCategoryRepository.findAllCategoriesActive();
     }
 
 
     @Override
     public List<Blog_Category> getAll() {
-        return List.of();
+        return blogCategoryRepository.findAll();
     }
 
     @Override
@@ -101,6 +102,11 @@ public class Blog_CategoryServiceImpl implements Blog_CategoryService {
         }
 
         return blogCategoryRepository.save(category);
+    }
+
+    @Override
+    public List<Blog_Category> findCategoryBySorting(String field) {
+        return blogCategoryRepository.findAll(Sort.by(Sort.Direction.ASC,field));
     }
 
 }

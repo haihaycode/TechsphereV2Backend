@@ -1,7 +1,7 @@
 package com.Techsphere.TechsphereV2Backend.implementation.Blog;
 
 import com.Techsphere.TechsphereV2Backend.Repository.BlogRepository.BlogPostRepository;
-import com.Techsphere.TechsphereV2Backend.Repository.Blog_CategoryRepository;
+import com.Techsphere.TechsphereV2Backend.Repository.Blog_CategoryRepository.Blog_CategoryRepository;
 import com.Techsphere.TechsphereV2Backend.Repository.UserRepository;
 import com.Techsphere.TechsphereV2Backend.Service.Blog.Blog_PostService;
 import com.Techsphere.TechsphereV2Backend.dto.auth.Blog.Blog_PostDTO;
@@ -9,7 +9,6 @@ import com.Techsphere.TechsphereV2Backend.entity.Blog_Category;
 import com.Techsphere.TechsphereV2Backend.entity.Blog_Post;
 import com.Techsphere.TechsphereV2Backend.entity.User;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

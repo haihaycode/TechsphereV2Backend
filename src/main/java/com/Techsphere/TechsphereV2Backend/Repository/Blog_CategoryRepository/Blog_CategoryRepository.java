@@ -1,4 +1,4 @@
-package com.Techsphere.TechsphereV2Backend.Repository;
+package com.Techsphere.TechsphereV2Backend.Repository.Blog_CategoryRepository;
 
 import com.Techsphere.TechsphereV2Backend.entity.Blog_Category;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,8 +13,8 @@ public interface Blog_CategoryRepository extends JpaRepository<Blog_Category, Lo
 //        ORDER BY isActive DESC, categoryName ASC;
     //Hiển thị từ duới lên & 8 bài viết mới nhất lên đâu
     //Tìm hiểu sort không cần viết lại query nhiều lần
-    @Query("SELECT c FROM Blog_Category c ORDER BY c.isActive DESC, c.categoryName ASC")
-    List<Blog_Category> findAllCategoriesOrderedByActiveAndName();
+    @Query("SELECT c FROM Blog_Category c WHERE c.isActive = true ORDER BY c.createdAt ASC")
+    List<Blog_Category> findAllCategoriesActive();
     boolean existsByCategoryName(String category_name);
 
     @Modifying
